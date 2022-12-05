@@ -10,6 +10,13 @@ from typing import Tuple
 def add_mul(first: float, second: float) -> Tuple[float, float, float]:
     return ..., ..., ...
 
+def add_mul(a, b, round_amount = 10):
+    sum = round(a + b, round_amount)
+    sub = round(a - b, round_amount)
+    mul = round(a * b, round_amount)
+    return sum, sub, mul
+
+print(add_mul(2.323, 8.5536, 2))
 
 # Реализовать функции деления, деления нацело и нахождения остатка от деления.
 def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
