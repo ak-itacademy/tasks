@@ -82,12 +82,11 @@ def check_32_even_bit_set(value: int) -> bool:
     i = 0
     while i < 32:
         if (value >> i) & 1:
-            answer = True
+            return True
             break
         else:
-            answer = False
+            return False
     i += 2
-    return answer
 
 
 # Посчитать количество бит в 32-х битном числе, установленных в ноль.
@@ -103,17 +102,17 @@ def calculate_32_zero_bits(value: int) -> int:
 
 # Упаковать два целочисленных значения в 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
-import struct
+
 def pack_4_4(first: int, second: int) -> int:
-    pack = struct.pack('ll', second, first)
-    return pack
+    return second << 4 | first
 
 
 # Распоковать два целочисленных значения из 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
-def unpack_4_4(first: int, second: int) -> int:
-    unpack = struct.unpack('ll', pack_4_4(first,second))
-    return unpack
+def unpack_4_4(input: int,):
+    first = input & 15
+    second = (input >> 4) & 15
+    return first, second
 
 
 # Ограничить число заданным интервалом. Нижняя граница заданного интервала меньше либо равна верхней.
