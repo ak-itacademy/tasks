@@ -10,25 +10,16 @@ from typing import Tuple
 def add_mul(first: float, second: float) -> Tuple[float, float, float]:
     return ..., ..., ...
 
-
-# def add_mul(first, second, round_amount = 10):
-#     try:
-#         first = float(first)
-#         second = float(second)
-#         round_amount = int(round_amount)
-#     except(TypeError, ValueError):
-#         print("Invalid data!")
-#         sum, sub, mul = type(first), type(second), type(round_amount)
-#     else:
-#         sum = round(first + second, round_amount)
-#         sub = round(first - second, round_amount)
-#         mul = round(first * second, round_amount)
+# def add_mul(first: float, second: float, round_amount = 10) -> Tuple[float, float, float]:
+#     sum = round(first + second, round_amount)
+#     sub = round(first - second, round_amount)
+#     mul = round(first * second, round_amount)
 #
 #     return sum, sub, mul
 #
-# a = input("Enter the first float number -> ")
-# b = input("Enter the second float number -> ")
-# z = input("Enter rounding accuracy -> ")
+# a = float(input("Enter the first float number -> "))
+# b = float(input("Enter the second float number -> "))
+# z = int(input("Enter rounding accuracy -> "))
 # print(add_mul(a, b, z))
 
 
@@ -37,28 +28,20 @@ def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
     return ..., ..., ...
 
 
-# def div_int_rem(first, second, round_amount = 10):
+# def div_int_rem(first: float, second: float, round_amount = 10) -> Tuple[float, float, float]:
 #     try:
-#         first = float(first)
-#         second = float(second)
-#         round_amount = int(round_amount)
-#     except(TypeError, ValueError):
-#         print("Invalid data!")
+#         div = round(first / second, round_amount)
+#         int_div = first // second
+#         rem = round(first % second, round_amount)
+#     except ZeroDivisionError:
+#         print("Division by zero!")
 #         div, int_div, rem = None, None, None
-#     else:
-#         try:
-#             div = round(first / second, round_amount)
-#             int_div = first // second
-#             rem = round(first % second, round_amount)
-#         except ZeroDivisionError:
-#             print("Division by zero!")
-#             div, int_div, rem = None, None, None
 #
 #     return div, int_div, rem
 #
-# a = input("Enter the first float number -> ")
-# b = input("Enter the second float number -> ")
-# z = input("Enter rounding accuracy -> ")
+# a = float(input("Enter the first float number -> "))
+# b = float(input("Enter the second float number -> "))
+# z = int(input("Enter rounding accuracy -> "))
 # print(div_int_rem(a, b, z))
 
 
@@ -66,22 +49,15 @@ def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
 def xor_swap(first: int, second: int) -> int:
     return ...
 
-
 # def xor_swap(first: int, second: int) -> Tuple[int, int]:
-#     try:
-#         first = int(first)
-#         second = int(second)
-#     except(TypeError, ValueError):
-#         print("Invalid data!")
-#         first = None
-#     else:
-#         first = first ^ second
-#         second = first ^ second
-#         first = first ^ second
+#     first = first ^ second
+#     second = first ^ second
+#     first = first ^ second
+#
 #     return first, second
 #
-# a = input("Enter the first int number -> ")
-# b = input("Enter the second int number -> ")
+# a = int(input("Enter the first int number -> "))
+# b = int(input("Enter the second int number -> "))
 # print(xor_swap(a, b))
 
 
@@ -89,24 +65,17 @@ def xor_swap(first: int, second: int) -> int:
 def min_conditional(first: float, second: float) -> float:
     return ...
 
-
 # def min_conditional(first: float, second: float) -> float:
-#     if first < second:
-#         return first
-#     elif first == second:
-#         return "Equal"
-#     else:
-#         return second
+#     return first if first < second else second
 #
-# a = input("Enter the first float number -> ")
-# b = input("Enter the second float number -> ")
+# a = float(input("Enter the first float number -> "))
+# b = float(input("Enter the second float number -> "))
 # print(min_conditional(a, b))
 
 
 # Реализовать функции умножения на 2, 8 и 32 с помощью битовых операций сдвига.
 def mul_shift_2_8_32(value: int) -> Tuple[int, int, int]:
     return ..., ..., ...
-
 
 # def mul_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 #     mul_shift_2 = value << 1
@@ -123,7 +92,6 @@ def mul_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 def div_shift_2_8_32(value: int) -> Tuple[int, int, int]:
     return ..., ..., ...
 
-
 # def div_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 #     div_shift_2 = value >> 1
 #     div_shift_8 = value >> 3
@@ -139,9 +107,12 @@ def div_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 def exponentiation(divident: float, divider: float, power: float) -> float:
     return ...
 
-
 # def exponentiation(divident: float, divider: float, power: float) -> float:
-#     result = (divident % divider) ** power
+#     try:
+#         result = (divident % divider) ** power
+#     except ZeroDivisionError:
+#         print("Division by zero!")
+#         result = None
 #     return result
 #
 #
@@ -155,8 +126,8 @@ def exponentiation(divident: float, divider: float, power: float) -> float:
 def sign(value: int) -> int:
     return ...
 
-# def sign(value: int) -> str:
-#     return "-" if value & (2 ** 32) else "+"
+# def sign(value: int) -> int:
+#     return -1 if value & (2 ** 32) else 1
 #
 # value = int(input("Enter int number -> "))
 # print(sign(value))
@@ -166,8 +137,7 @@ def change_sign(value: int) -> int:
     return ...
 
 # def change_sign(value: int) -> int:
-#     result = ~value + 1
-#     return result
+#     return ~value + 1
 #
 # value = int(input("Enter int number -> "))
 # print(change_sign(value))
@@ -179,16 +149,17 @@ def check_32_even_bit_set(value: int) -> bool:
 
 # def check_32_even_bit_set(value: int) -> bool:
 #     i = 0
+#     result = False
 #     while i < 32:
 #         if (value >> i) & 1:
 #             result = True
 #             break
-#         else:
-#             result = False
+#
 #         i += 2
 #     return result
 #
 # value = int(input("Enter int number -> "))
+# print(bin(value))
 # print(check_32_even_bit_set(value))
 
 
@@ -216,10 +187,9 @@ def pack_4_4(first: int, second: int) -> int:
 
 # def pack_4_4(first: int, second: int) -> int:
 #     if(first > 15 or second > 15):
-#         print("Data out of the range!")
-#         result = None
-#     else:
-#         result = second << 4 | first
+#         print("Some data will be lost!")
+#
+#     result = (second & 15) << 4 | (first & 15)
 #     return result
 #
 # value_1 = int(input("Enter int number in the range 0...15 -> "))
@@ -233,6 +203,8 @@ def unpack_4_4(first: int, second: int) -> int:
     return ...
 
 # def unpack_4_4(number: int) -> Tuple[int, int]:
+#     if number > 255:
+#         print("Some data will be lost!")
 #     first = number & 15
 #     second = (number >> 4) & 15
 #     return first, second
@@ -245,36 +217,103 @@ def unpack_4_4(first: int, second: int) -> int:
 def clamp(value: float, low: float, high: float) -> float:
     return ...
 
+# def clamp(value: float, low: float, high: float) -> float:
+#     if low > high:
+#         print("Lower range limit is higher than higher range limit!")
+#         result = None
+#     else:
+#         if value < low:
+#             print("Value {} is less than {}!".format(value, low))
+#             result = low
+#         elif value > high:
+#             print("Value {} is more than {}!".format(value, high))
+#             result = high
+#         else:
+#             result = value
+#     return result
+#
+# low = float(input("Enter float number of lower range limit-> "))
+# high = float(input("Enter float number of higher range limit-> "))
+# value = float(input("Enter float number-> "))
+# print(clamp(value, low, high))
+
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
     return ...
+
+# def clamp_any(value: float, low: float, high: float) -> float:
+#     if value > low and value > high:
+#         result = max(low, high)
+#     elif value < low and value < high:
+#         result = min(low, high)
+#     else:
+#         result = value
+#     return result
+#
+# low = float(input("Enter float number of lower range limit-> "))
+# high = float(input("Enter float number of higher range limit-> "))
+# value = float(input("Enter float number-> "))
+# print(clamp_any(value, low, high))
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
 def event_and_match_interval_m10_10(value: int) -> bool:
     return ...
 
+# def event_and_match_interval_m10_10(value: int) -> bool:
+#     return True if -10 <= value <= 10 and value % 2 else False
+#
+# value = int(input("Enter int number-> "))
+# print(event_and_match_interval_m10_10(value))
+
 
 # Определить порядок выолнения операций и расстваить скобки таким образом, чтобы он стал обратным.
 def reverse_operations(value: float):
     return value ** 4 * 0.5 + 0.25
+
+# def reverse_operations(value: float):
+#     return value ** (4 * (0.5 + 0.25))
+#
+# value = float(input("Enter float number-> "))
+# print(reverse_operations(value))
 
 
 # Установить n-ый бит числа в единицу.
 def set_nth_bit(value: int, n: int) -> int:
     return ...
 
+# def set_nth_bit(value: int, n: int) -> int:
+#     return value | 2 ** n
+#
+# value = int(input("Enter int number-> "))
+# n = int(input("Enter int number-> "))
+# print(bin(value))
+# print(bin(set_nth_bit(value, n)))
+
 
 # Переключить n-ый бит числа.
 def switch_nth_bit(value: int, n: int) -> int:
     return ...
+
+# def switch_nth_bit(value: int, n: int) -> int:
+#     return value ^ 2 ** n
+#
+# value = int(input("Enter int number-> "))
+# n = int(input("Enter int number-> "))
+# print(bin(value))
+# print(bin(switch_nth_bit(value, n)))
 
 
 # Расставить скобки таким образом, чтобы выражение в задаче было возведено в степень 3.
 def change_priorities(x: float) -> float:
     return x + 3 ** 3
 
+# def change_priorities(x: float) -> float:
+#     return (x + 3) ** 3
+#
+# x = float(input("Enter float number-> "))
+# print(change_priorities(x))
 
 '''
 Задачи повышенной сложности.
@@ -290,7 +329,54 @@ def change_priorities(x: float) -> float:
 def int_to_float(value: int) -> float:
     return ...
 
+# import struct
+#
+# def int_to_float(value: int) -> float:
+#     if value == 0:
+#         result = 0.0
+#     else:
+#         sign = 0 if value > 0 else 1
+#
+#         if value < 0:
+#             value = ~(value - 1)
+#
+#         i = 0
+#         while value >= 2 ** i:
+#             i += 1
+#
+#         exp = 127 + i - 1
+#         man = int(2 ** 23 * ((value - 2 ** (i - 1)) / (2 ** i - 2 ** (i - 1))))
+#         my_value = sign << 31 | exp << (31 - 8) | man
+#
+#         my_bytes = struct.pack("L", my_value)
+#         result = struct.unpack("f", my_bytes)
+#
+#     return result[0]
+#
+# x = int(input("Enter int number-> "))
+# print(int_to_float(x))
+
 
 # Вернуть наименьшее целое число без использования условных операторов и встроенных функций.
 def min_raw(first: int, last: int) -> int:
     return ...
+
+# def min_raw(first: int, last: int) -> int:
+#     difference = first ^ last
+#
+#     n = 0
+#     remainder = difference
+#     while remainder != 0:
+#         n += 1
+#         remainder = difference >> n
+#
+#     last_bit = n - 1
+#
+#     result = last if first & (1 << last_bit) else first
+#
+#     return result
+#
+#
+# first = int(input("Enter int number-> "))
+# last = int(input("Enter int number-> "))
+# print(min_raw(first, last))
