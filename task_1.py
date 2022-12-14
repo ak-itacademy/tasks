@@ -155,7 +155,7 @@ def unpack_4_4(number: int) -> Tuple[int, int]:
 # Ограничить число заданным интервалом. Нижняя граница заданного интервала меньше либо равна верхней.
 
 
-import numpy
+from numpy import clip
 
 
 def clamp(value: float, low: float, high: float) -> Optional[float]:
@@ -163,7 +163,7 @@ def clamp(value: float, low: float, high: float) -> Optional[float]:
         print("Lower range limit is higher than higher range limit!")
         return None
     else:
-        return numpy.clip(value, a_min=low, a_max=high)
+        return clip(value, a_min=low, a_max=high)
 
 
 # low = float(input("Enter float number of lower range limit-> "))
@@ -174,7 +174,7 @@ def clamp(value: float, low: float, high: float) -> Optional[float]:
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
-    return numpy.clip(value, a_min=high, a_max=low) if low > high else numpy.clip(value, a_min=low, a_max=high)
+    return clip(value, a_min=high, a_max=low) if low > high else clip(value, a_min=low, a_max=high)
 
 
 # low = float(input("Enter float number of lower range limit-> "))
