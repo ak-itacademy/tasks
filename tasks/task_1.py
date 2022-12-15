@@ -5,6 +5,7 @@
 
 
 from typing import Tuple, Optional
+import struct
 
 
 # Реализовать функции сложения, вычитания и умножения двух чисел.
@@ -19,14 +20,7 @@ def add_mul(first: float, second: float) -> Tuple[float, float, float]:
 
 # Реализовать функции деления, деления нацело и нахождения остатка от деления.
 def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
-    try:
-        div = first / second
-        int_div = first // second
-        rem = first % second
-    except ZeroDivisionError:
-        print("Division by zero!")
-        div, int_div, rem = None, None, None
-    return div, int_div, rem
+    return first / second, first // second, first % second
 
 
 # a = float(input("Enter the first float number -> "))
@@ -155,15 +149,16 @@ def unpack_4_4(number: int) -> Tuple[int, int]:
 # Ограничить число заданным интервалом. Нижняя граница заданного интервала меньше либо равна верхней.
 
 
-from numpy import clip
-
-
 def clamp(value: float, low: float, high: float) -> Optional[float]:
     if low > high:
         print("Lower range limit is higher than higher range limit!")
         return None
     else:
-        return clip(value, a_min=low, a_max=high)
+        if value < low:
+            return low
+        elif value > high:
+            return high
+        return value
 
 
 # low = float(input("Enter float number of lower range limit-> "))
@@ -173,8 +168,10 @@ def clamp(value: float, low: float, high: float) -> Optional[float]:
 
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
-def clamp_any(value: float, low: float, high: float) -> float:
-    return clip(value, a_min=high, a_max=low) if low > high else clip(value, a_min=low, a_max=high)
+def clamp_any(value: float, low: float, high: float) -> Optional[float]:
+    if low > high:
+        low, high = high, low
+    return clamp(value, low, high)
 
 
 # low = float(input("Enter float number of lower range limit-> "))
@@ -243,10 +240,7 @@ def change_priorities(x: float) -> float:
 # Для решения этой задачи нужно также выяснить, как конвертировать байты в целые и дробные числа.
 
 
-import struct
-
-
-def int_to_float(value: int) -> Optional[float]:
+def int_to_float(value: int) -> Optional[float or str]:
     sign = 0 if value >= 0 else 1
     value = abs(value)
 
@@ -255,19 +249,13 @@ def int_to_float(value: int) -> Optional[float]:
         while value >= 1 << i:
             i += 1
 
-        if value >= 1:
-            exp = 127 + i - 1
-            man = int((1 << 23) * ((value - (1 << (i - 1))) / ((1 << i) - (1 << (i - 1)))))
-        else:
-            exp = 0
-            man = int((1 << 23) * value)
+        exp = 127 + i - 1 if value >= 1 else 0
+        man = int((1 << 23) * ((value - (1 << (i - 1))) / ((1 << i) - (1 << (i - 1))))) if value >= 1 else 0
 
         my_value = sign << 31 | exp << 23 | man
         my_bytes = struct.pack("L", my_value)
         return struct.unpack("f", my_bytes)[0]
-    else:
-        print("{}inf".format("-" if sign == 1 else ""))
-        return None
+    return "+/-inf"
 
 
 # x = int(input("Enter int number-> "))
@@ -276,8 +264,7 @@ def int_to_float(value: int) -> Optional[float]:
 
 # Вернуть наименьшее целое число без использования условных операторов и встроенных функций.
 def min_raw(first: int, last: int) -> int:
-    return first if (first - last) & (1 << 32) else last
-
+    return ((first - last) >> 32) * (last - first) + last
 
 # first = int(input("Enter int number-> "))
 # last = int(input("Enter int number-> "))
