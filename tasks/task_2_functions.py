@@ -31,10 +31,7 @@ def power_func(value: float, power=2.0) -> float:
 # Реализовать функцию, которая принимает произвольный набор параметров и возвращает кортеж, содержащий
 # типы переданных параметров.
 def type_func(*arg) -> Tuple:
-    my_list = []
-    for n in arg:
-        my_list.append(type(n))
-    return tuple(my_list)
+    return tuple(map(type, arg))
 
 
 # print(type_func(32, 56, "dfd", [3, 4, "dff"], (34, "df"), {"fdf": 3}))
@@ -51,25 +48,13 @@ def type_func(*arg) -> Tuple:
 #   dict: [['e', {1: 2}]]
 # }
 def grouping(**arg):
-    my_full_type_list = []
-
+    my_type_list = {}
     for key, value in arg.items():
-        type_ = str(type(value))
-        if type_ not in my_full_type_list:
-            my_full_type_list.append(type_)
+        my_type = str(type(value))[8:-2]
+        my_type_list.setdefault(my_type, [])
+        my_type_list[my_type].append([key, value])
 
-    my_dict = {}
-
-    for i in range(len(my_full_type_list)):
-        temporary_list = []
-
-        for key, value in arg.items():
-            if my_full_type_list[i] == str(type(value)):
-                temporary_list.append([key, value])
-
-        my_dict[my_full_type_list[i][8:-2]] = temporary_list
-
-    return my_dict
+    return my_type_list
 
 
 # for key, value in grouping(a=34, b='some text', c=2, d=1.3, e={1: 2}, f=-3.0,
@@ -85,25 +70,19 @@ def grouping(**arg):
 # Вместо *name* должен быть подставлен именованный параметр с именем name.
 
 def function(text: str, *arg, **kwargs):
-    cnt = 0
-    my_str = ""
-    my_list = []
-    for i in range(len(text)):
-        if text[i] == "*":
-            cnt += 1
+    my_list = text.split()
 
-        if cnt % 2 or text[i] == "*":
-            my_str = my_str + text[i]
+    for i in range(len(my_list)):
+        if "**" in my_list[i]:
+            my_list[i] = my_list[i].replace("**", "*")
+        elif "*" in my_list[i]:
+            element = my_list[i].strip("*,")
+            if element.lstrip("-").isdigit():
+                my_list[i] = my_list[i].replace(f"*{element}*", str(arg[int(element)]))
+            else:
+                my_list[i] = my_list[i].replace(f"*{element}*", str(kwargs[element]))
 
-        if text[i] == "*" and not cnt % 2:
-            my_list.append(my_str)
-            my_str = ""
-
-    result = text.replace("**", "*")
-    for element in my_list:
-        a = str(arg[int(element[1:-1])]) if element[1:-1].lstrip("-").isdigit() else str(kwargs.get(element[1:-1]))
-        result = result.replace(element, a)
-
+    result = " ".join(my_list)
     return result
 
 
