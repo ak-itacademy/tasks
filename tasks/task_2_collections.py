@@ -109,7 +109,7 @@ def build_dict_from_indexed_values(values: Iterable) -> Dict:
 
 
 # Создать и вернуть словарь, собранный на основе списка пар ключ-значение.
-def build_dict_from_key_value_pairs(kws: List[Tuple) -> Dict:
+def build_dict_from_key_value_pairs(kws: List[Tuple]) -> Dict:
     ...
 
     # Создать и вернуть словарь, собранный из двух списков, один из которых
