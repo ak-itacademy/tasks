@@ -156,7 +156,8 @@ def clamp(value: float, low: float, high: float) -> Optional[float]:
     else:
         if value < low:
             return low
-        elif value > high:
+
+        if value > high:
             return high
         return value
 
@@ -240,26 +241,27 @@ def change_priorities(x: float) -> float:
 # Для решения этой задачи нужно также выяснить, как конвертировать байты в целые и дробные числа.
 
 
-def int_to_float(value: int) -> Optional[float or str]:
+def int_to_float(value: int) -> float:
     sign = 0 if value >= 0 else 1
     value = abs(value)
 
-    if value <= 127:
-        i = 0
-        while value >= 1 << i:
-            i += 1
+    if value > 1 << 128:
+        value = 1 << 128
 
-        exp = 127 + i - 1 if value >= 1 else 0
-        man = int((1 << 23) * ((value - (1 << (i - 1))) / ((1 << i) - (1 << (i - 1))))) if value >= 1 else 0
+    i = 0
+    while value >= 1 << i:
+        i += 1
 
-        my_value = sign << 31 | exp << 23 | man
-        my_bytes = struct.pack("L", my_value)
-        return struct.unpack("f", my_bytes)[0]
-    return "+/-inf"
+    exp = 127 + i - 1 if value >= 1 else 0
+    man = int((1 << 23) * ((value - (1 << (i - 1))) / ((1 << i) - (1 << (i - 1))))) if value >= 1 else 0
+
+    my_value = sign << 31 | exp << 23 | man
+    my_bytes = struct.pack("L", my_value)
+    return struct.unpack("f", my_bytes)[0]
 
 
-# x = int(input("Enter int number-> "))
-# print(int_to_float(x))
+x = int(input("Enter int number-> "))
+print(int_to_float(x))
 
 
 # Вернуть наименьшее целое число без использования условных операторов и встроенных функций.
