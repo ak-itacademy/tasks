@@ -10,7 +10,7 @@ import copy
 
 # Сконструировать и вернуть список из переданных аргументов.
 def build_list_from_args(*args) -> List:
-    return [x for x in args]
+    return list(args)
 
 
 # a = build_list_from_args(2, 3, 4, 5, 3, "ddw", "fe")
@@ -38,8 +38,7 @@ def build_list_from_args_using_type(argument_type: type, *args) -> List:
 # Сконструировать и вернуть список из переданных аргументов, тип которых входит в заданное множество.
 # Для более эффективной работы преобразовать `argument_types` в `set`.
 def build_list_from_args_using_type_set(argument_types: Iterable, *args) -> List:
-    argument_types = set(argument_types)
-    return [x for x in args for type_ in argument_types if type(x) == type_]
+    return [x for x in args if type(x) in set(argument_types)]
 
 
 # a = build_list_from_args_using_type_set([float, str], 2, 3, "wew", 4, 5.7, 3, "ddw", "fe", 3.8, [3, 5])
@@ -58,7 +57,8 @@ def build_list_from_two_lists(first: List, second: List) -> List:
 # Сконструировать и вернуть список из неограниченного числа списков, переданных в качестве аргументов.
 def build_list_from_list_args(*lists) -> List:
     my_list = []
-    [my_list.extend(list_) for list_ in lists]
+    for list_ in lists:
+        my_list.extend(list_)
     return my_list
 
 
@@ -77,11 +77,14 @@ def build_list_from_value_and_length(value: Any, length: int) -> List:
 
 # Удалить из списка заданный элемент.
 def remove_value_from_list(values: List, value_to_remove: Any) -> List:
-    values.remove(value_to_remove)
+    cnt = values.count(value_to_remove)
+    while cnt != 0:
+        values.remove(value_to_remove)
+        cnt -= 1
     return values
 
 
-# a = remove_value_from_list([3, 5, 7, 8, "ref", "del", [], {}], "del")
+# a = remove_value_from_list([3, 5, 7, 8, "ref", "del", "del", [], {}], "del")
 # print(a, type(a))
 
 
@@ -108,7 +111,7 @@ def remove_values_from_list(values: List, values_to_remove: Iterable) -> List:
     return [value for value in values if value not in set(values_to_remove)]
 
 
-# a = remove_values_from_list([3, 5, 7, 8, "ref", "del"], ["del", 5, 3])
+# a = remove_values_from_list([3, 5, 3, 7, 8, 5, 5, "ref", "del", "del"], ["del", 5, 3])
 # print(a, type(a))
 
 
@@ -133,17 +136,16 @@ def remove_values_from_list_using_filter(values: List, values_to_remove: Any) ->
 
 # Удалить из списка дублирующиеся значения (использовать преобразование в `set` и обратно).
 def remove_duplicates_from_list(values: List) -> List:
-    values = set(values)
-    return list(values)
+    return list(set(values))
 
 
-# a = remove_duplicates_from_list([3, "ref", 5, 7, 3, 7, 8, "ref", "del"])
+# a = remove_duplicates_from_list([3, "ref", 5, 7, 7, 3, 7, 8, "ref", "del"])
 # print(a, type(a))
 
 
 # Создать и вернуть словарь из заданного набора именованных аргументов, значения которых имеют тип int.
 def build_dict_from_named_arguments_of_type_int(**kwargs) -> Dict:
-    return {str(key): value for key, value in kwargs.items() if isinstance(value, int)}
+    return {key: value for key, value in kwargs.items() if isinstance(value, int)}
 
 # a = build_dict_from_named_arguments_of_type_int(a=3, b="ref", c=5, d=7.6, e=3, f=7, g=8.3, h="ref", i="del")
 # print(a, type(a))
@@ -162,10 +164,13 @@ def build_dict_from_keys(values: Iterable) -> Dict:
 # Создать и вернуть словарь, используя в качестве ключей аргумент функции,
 # а в качестве значений - значение по-умолчанию.
 def build_dict_from_keys_and_default(values: Iterable, default: Any) -> Dict:
-    return dict.fromkeys(values, default)
+    my_dict = {}
+    for value in values:
+        my_dict.setdefault(value, default.copy())
+    return my_dict
 
 
-# a = build_dict_from_keys_and_default([8, 7, 9, 4], "nothing")
+# a = build_dict_from_keys_and_default([8, 7, 9, 4], [4])
 # print(a, type(a))
 
 
@@ -200,8 +205,9 @@ def build_dict_from_two_lists(keys: List, values: List) -> Dict:
 # Сформировать из двух словарей и вернуть его. В случае, если ключи совпадают,
 # использовать значение из второго словаря (dict.update).
 def build_dict_using_update(first: Dict, second: Dict) -> Dict:
-    first.update(second)
-    return first
+    my_dict = first
+    my_dict.update(second)
+    return my_dict
 
 
 # a = build_dict_using_update({8: 3, 7: 4}, {8: 7, 1: 0})
@@ -211,8 +217,9 @@ def build_dict_using_update(first: Dict, second: Dict) -> Dict:
 # Обновить словарь (и вернуть его), используя значения именованных аргументов.
 # Заменить значение в случае совпадения ключей.
 def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
-    dictionary.update(kwargs)
-    return dictionary
+    my_dict = dictionary
+    my_dict.update(kwargs)
+    return my_dict
 
 
 # a = update_dict_using_kwargs({"a": 3, "b": 4, "c": 7, 1: 0}, a=9, d="df", c=6)
@@ -222,13 +229,14 @@ def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
 # Обновить словарь (и вернуть его), используя значения именованных аргументов.
 # Объединить значения в список в случае совпадения ключей.
 def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
+    my_dict = dictionary
     for key, value in kwargs.items():
-        if key in dictionary.keys():
-            dictionary[key] = [dictionary[key]]
-            dictionary[key].append(kwargs[key])
+        if key in my_dict.keys():
+            my_dict[key] = [my_dict[key]]
+            my_dict[key].append(kwargs[key])
         else:
-            dictionary[key] = kwargs[key]
-    return dictionary
+            my_dict[key] = kwargs[key]
+    return my_dict
 
 
 # a = update_and_merge_dict_using_kwargs({"a": 3, "b": 4, "c": 7, 1: 0}, a=9, d="df", c=6)
@@ -238,13 +246,14 @@ def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
 # Объединить два словарь и вернуть результат.
 # Объединить значения в список в случае совпадения ключей.
 def merge_two_dicts(first: Dict, second: Dict) -> Dict:
+    my_dict = first
     for key in second.keys():
-        if key in first.keys():
-            first[key] = [first[key]]
-            first[key].append(second[key])
+        if key in my_dict.keys():
+            my_dict[key] = [my_dict[key]]
+            my_dict[key].append(second[key])
         else:
-            first[key] = second[key]
-    return first
+            my_dict[key] = second[key]
+    return my_dict
 
 
 # a = merge_two_dicts({"a": 3, "b": 4, "c": 7, "e": 0}, {"a": 9, "d": "df", "c": 6})
