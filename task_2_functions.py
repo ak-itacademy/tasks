@@ -10,6 +10,8 @@ def replace(string: str) -> str:
         return string
     else:
         return string[-1] + replace(string[:-1])
+    
+print(replace('Какой счёт?'))
 
 
 # Реализовать фунекцию, которая принимает два параметра: число и степень - и возвращает это число,
@@ -17,6 +19,8 @@ def replace(string: str) -> str:
 # В случае, если степень не задана пользователем, используется значение 2.0.
 def degree(a: float, b=2.0) -> float:
     return a ** b
+
+print(degree(7, 4))
 
 
 # Реализовать функцию, которая принимает произвольный набор параметров и возвращает кортеж, содержащий
@@ -27,6 +31,7 @@ def func(*args) -> tuple:
         a.append(type(item))
     return a
 
+print(func(a=5, b=5, c=3.6, d='some text', e=5.8, f='ttt', h={1: 2}, i=-3.0))
 
 # Реализовать функцию, которая принимает произвольный набор именованных параметров и возвращает их
 # группировку по типу в виде словаря.
@@ -44,6 +49,8 @@ def Sort_dict(**kwargs):
     for key, value in kwargs.items():
         sort.setdefault(str(type(value)), []).append([key, value])
     return sort
+
+print(Sort_dict(a=5, b=5, c=3.6, d='some text', e=5.8, f='ttt', h={1: 2}, i=-3.0))
 
 # Реализовать функцию, которая принимает строку и произвольный набор неименованных и именованных параметров.
 # Строка может содержать произвольный набор подстрок вида **, *index* или *name*.
