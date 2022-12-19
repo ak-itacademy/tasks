@@ -10,7 +10,8 @@ def replace(string: str) -> str:
         return string
     else:
         return string[-1] + replace(string[:-1])
-    
+
+
 print(replace('Какой счёт?'))
 
 
@@ -19,6 +20,7 @@ print(replace('Какой счёт?'))
 # В случае, если степень не задана пользователем, используется значение 2.0.
 def degree(a: float, b=2.0) -> float:
     return a ** b
+
 
 print(degree(7, 4))
 
@@ -31,7 +33,9 @@ def func(*args) -> tuple:
         a.append(type(item))
     return a
 
-print(func(a=5, b=5, c=3.6, d='some text', e=5.8, f='ttt', h={1: 2}, i=-3.0))
+
+print(func(5, 7, (5, 7), {5: 7}, 's57', [5, 7]))
+
 
 # Реализовать функцию, которая принимает произвольный набор именованных параметров и возвращает их
 # группировку по типу в виде словаря.
@@ -49,6 +53,7 @@ def Sort_dict(**kwargs):
     for key, value in kwargs.items():
         sort.setdefault(str(type(value)), []).append([key, value])
     return sort
+
 
 print(Sort_dict(a=5, b=5, c=3.6, d='some text', e=5.8, f='ttt', h={1: 2}, i=-3.0))
 
