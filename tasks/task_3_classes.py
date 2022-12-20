@@ -34,8 +34,8 @@ class LengthUnits:
     UNIT_NAME: str = "Length Units"
 
     def __init__(self, value: float or "LengthUnits", conversion_rate: float):
-        self.conversion_rate__ = float(conversion_rate)
-        self.value__ = float(value if isinstance(value, float) or isinstance(value, int) else
+        self.__conversion_rate = float(conversion_rate)
+        self.__value = float(value if isinstance(value, float) or isinstance(value, int) else
                              value.value() * value.conversion_rate() / self.conversion_rate())
 
     def __eq__(self, another: "LengthUnits"):
@@ -45,51 +45,51 @@ class LengthUnits:
         return self.value() * self.conversion_rate() < another.conversion_to_base_unit()
 
     def __add__(self, another):
-        self.value__ += (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value += (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self
 
     def __iadd__(self, another):
-        self.value__ += (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value += (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self
 
     def __sub__(self, another):
-        self.value__ -= (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value -= (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self
 
     def __isub__(self, another):
-        self.value__ -= (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value -= (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self
 
     def __mul__(self, value):
-        self.value__ *= value
+        self.__value *= value
         return self
 
     def __imul__(self, value):
-        self.value__ *= value
+        self.__value *= value
         return self
 
     def __truediv__(self, another):
-        self.value__ /= (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value /= (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self if another is isinstance(another, float) or isinstance(another, int) else self.value()
 
     def __idiv__(self, another):
-        self.value__ /= (another if isinstance(another, float) or isinstance(another, int) else
+        self.__value /= (another if isinstance(another, float) or isinstance(another, int) else
                          another.conversion_to_base_unit() / self.conversion_rate())
         return self if another is isinstance(another, float) or isinstance(another, int) else self.value()
 
     def value(self) -> float:
-        return self.value__
+        return self.__value
 
     def set_value(self, value: float):
-        self.value__ = float(value)
+        self.__value = float(value)
 
     def conversion_rate(self) -> float:
-        return self.conversion_rate__
+        return self.__conversion_rate
 
     def conversion_to_base_unit(self):
         return self.value() * self.conversion_rate()
