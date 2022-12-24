@@ -241,17 +241,18 @@ def clear_dummy_and_duplicate_elements(dictionary: Dict) -> Dict:
 
 # Обменять в словаре клчи и значения (в качестве значений могут выступать только неизменяемые значения).
 def swap_dict_keys_and_values(dictionary: Dict) -> Dict:
-    ...
+    dictionary.keys() == dictionary.items()
+    return dictionary
 
 
 # Вернуть словарь, отсортированный по ключу. Ключи могут иметь только тип int.
 def sort_dict_with_int_keys(dictionary: Dict) -> Dict:
-    ...
+    return sorted(dictionary.keys())
 
 
 # Вернуть словарь, отсортированный по ключу в обратном порядке. Ключи могут иметь только тип int.
 def sort_dict_backward_with_int_keys(dictionary: Dict) -> Dict:
-    ...
+    return sorted(dictionary.keys(-1))
 
 
 # Вернуть словарь, элементы которого сгруппированы по типу ключа.
@@ -272,8 +273,10 @@ def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
 # Подсчитать количество элементов словаря, имеющих числовой тип, значение которых находится
 # в интервале [-10, 25].
 def count_dict_elements(dictionary: Dict) -> Dict:
-    ...
-
+    for i in dictionary:
+        if type(i) == int and -10 <= i <= 25:
+            sum(i)
+    return i
 
 # Построить и возвратить словарь из двух списков. Количество ключей может превышать
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
