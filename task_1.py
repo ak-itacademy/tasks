@@ -78,15 +78,14 @@ def calculate_32_zero_bits(value: int) -> int:
 # Упаковать два целочисленных значения в 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def pack_4_4(first: int, second: int) -> int:
-    def pack_4_4(first: int, second: int) -> int:
-        return (second & 0x0f) << 4 | (first & 0x0f)
+    return (second & 0x0f) << 4 | (first & 0x0f)
 
 
 # Распоковать два целочисленных значения из 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def unpack_4_4(value: int) -> int:
     first = value & 0x0f
-    second = value & 0xf0
+    second = (value >> 4) & 0x0f
     return first, second
 
 
@@ -94,12 +93,18 @@ def unpack_4_4(value: int) -> int:
 def clamp(value: float, low: float, high: float) -> float:
     if low <= value <= high:
         return value
-
+    elif value < low:
+        return low
+    return high
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
     if low <= value <= high or high <= value <= low:
         return value
+    elif value > low > high or value < low < high:
+        return low
+    elif value > high > low:
+        return high
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
@@ -114,16 +119,13 @@ def reverse_operations(value: float):
 
 # Установить n-ый бит числа в единицу.
 def set_nth_bit(value: int, n: int) -> int:
-    if value & (1 << n) == 0:
-        value = value | (1 << n)
+    value = value | (1 << n)
+    return value
 
 
 # Переключить n-ый бит числа.
 def switch_nth_bit(value: int, n: int) -> int:
-    if value & (1 << n) == 0:
-        value = value | (1 << n)
-    else:
-        value = value ^ (1 << n)
+    value = value ^ (1 << n)
     return value
 
 
