@@ -100,8 +100,6 @@ def clamp(value: float, low: float, high: float) -> float:
 def clamp_any(value: float, low: float, high: float) -> float:
     if low <= value <= high or high <= value <= low:
         return value
-    else:
-        print('values out of border')
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
@@ -116,8 +114,8 @@ def reverse_operations(value: float):
 
 # Установить n-ый бит числа в единицу.
 def set_nth_bit(value: int, n: int) -> int:
-    value = value | (1 << n)
-    return value
+    if value & (1 << n) == 0:
+        value = value | (1 << n)
 
 
 # Переключить n-ый бит числа.
