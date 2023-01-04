@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tasks"
+version = "0.1.0"
+description = ""
+authors = ["Sasha K <a.kosak.mbx@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+colorama = "^0.4.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
