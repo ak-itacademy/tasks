@@ -48,7 +48,7 @@ def sign(value: int) -> int:
     for i in range(32):
         if value & (1 << i) == True:
             return True
-        return False
+    return False
 
 
 # Умножить целочисленное значение на -1 с помощью битовых операций и сложения.
@@ -59,31 +59,27 @@ def change_sign(value: int) -> int:
 # Возвратить True, если хотя бы один четный бит 32-х битного числа установлен в 1.
 def check_32_even_bit_set(value: int) -> bool:
     for i in range(32, 2):
-        if i % 2 == 0 and value & (i << 1) == 1:
+        if i % 2 == 0 and value & (1 << i) == 1:
             return True
-        return False
+    return False
 
 
 # Посчитать количество бит в 32-х битном числе, установленных в ноль.
 def calculate_32_zero_bits(value: int) -> int:
-    counter = 0
-    for i in range(32):
-        if value & (1 << i) == 0:
-            counter += 1
-    return counter
+    return (bin(value)[32:].count("0"))
 
 
 # Упаковать два целочисленных значения в 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def pack_4_4(first: int, second: int) -> int:
-    return byteval_pack == ((first & 0b1111) << 4) | ((second & 0b1111) << 4)
+    return byteval_pack == ((first & 0b1111) << 4) | ((second & 0b1111))
     # return first >> 2, second >> 2
 
 
 # Распоковать два целочисленных значения из 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def unpack_4_4(first: int, second: int) -> int:
-    return byteval_unpack == ((first & 0b1111) >> 4) | ((second & 0b1111) >> 4)
+    return byteval_unpack == ((first & 0b1111) >> 4) | ((second & 0b1111))
 
 
 # Ограничить число заданным интервалом. Нижняя граница заданного интервала меньше либо равна верхней.
@@ -93,7 +89,7 @@ def clamp(value: float, low: float, high: float) -> float:
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
-    return max(high, min(value, low))
+    return max(low, min(value, high))
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
@@ -138,5 +134,4 @@ def int_to_float(value: int) -> float:
 
 # Вернуть наименьшее целое число без использования условных операторов и встроенных функций.
 def min_raw(first: int, last: int) -> int:
-    c = [first, last]
-    return min(c)
+    return (first > last) * last + (last > first) * first
