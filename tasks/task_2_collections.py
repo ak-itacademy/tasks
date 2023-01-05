@@ -6,6 +6,7 @@
 
 from typing import Any, Dict, Iterable, List, Tuple
 import copy
+from itertools import zip_longest
 
 
 # Сконструировать и вернуть список из переданных аргументов.
@@ -68,20 +69,25 @@ def build_list_from_list_args(*lists) -> List:
 
 # Сконструировать список из заданного элемента и значения длины (использовать умножение).
 def build_list_from_value_and_length(value: Any, length: int) -> List:
-    return [value] * length
+    return [value.copy()] * length
 
 
-# a = build_list_from_value_and_length("text", 3)
+# l = [1, 2, 3]
+# a = build_list_from_value_and_length(l, 3)
+# print(a, type(a))
+# l[2] = 4
 # print(a, type(a))
 
 
 # Удалить из списка заданный элемент.
 def remove_value_from_list(values: List, value_to_remove: Any) -> List:
-    cnt = values.count(value_to_remove)
-    while cnt != 0:
-        values.remove(value_to_remove)
-        cnt -= 1
-    return values
+    final_list = values.copy()
+    while True:
+        try:
+            final_list.remove(value_to_remove)
+        except ValueError:
+            break
+    return final_list
 
 
 # a = remove_value_from_list([3, 5, 7, 8, "ref", "del", "del", [], {}], "del")
@@ -164,20 +170,20 @@ def build_dict_from_keys(values: Iterable) -> Dict:
 # Создать и вернуть словарь, используя в качестве ключей аргумент функции,
 # а в качестве значений - значение по-умолчанию.
 def build_dict_from_keys_and_default(values: Iterable, default: Any) -> Dict:
-    my_dict = {}
-    for value in values:
-        my_dict.setdefault(value, default.copy())
-    return my_dict
+    return {value: copy.copy(default) for value in values}
 
 
-# a = build_dict_from_keys_and_default([8, 7, 9, 4], [4])
+# l = [4, 5]
+# a = build_dict_from_keys_and_default([8, 7, 9, 4], l)
+# print(a, type(a))
+# l[1] = 6
 # print(a, type(a))
 
 
 # Создать и вернуть словарь, ключами которого являются индексы элементов,
 # а значениями - значения элементов iterable параметров (использовать enumerate и dict comprehension).
 def build_dict_from_indexed_values(values: Iterable) -> Dict:
-    return {key: value for key, value in enumerate(values)}
+    return dict(enumerate(values))
 
 
 # a = build_dict_from_indexed_values([8, 7, 9, 4, "add"])
@@ -205,7 +211,7 @@ def build_dict_from_two_lists(keys: List, values: List) -> Dict:
 # Сформировать из двух словарей и вернуть его. В случае, если ключи совпадают,
 # использовать значение из второго словаря (dict.update).
 def build_dict_using_update(first: Dict, second: Dict) -> Dict:
-    my_dict = first
+    my_dict = copy.copy(first)
     my_dict.update(second)
     return my_dict
 
@@ -217,7 +223,7 @@ def build_dict_using_update(first: Dict, second: Dict) -> Dict:
 # Обновить словарь (и вернуть его), используя значения именованных аргументов.
 # Заменить значение в случае совпадения ключей.
 def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
-    my_dict = dictionary
+    my_dict = copy.copy(dictionary)
     my_dict.update(kwargs)
     return my_dict
 
@@ -229,34 +235,40 @@ def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
 # Обновить словарь (и вернуть его), используя значения именованных аргументов.
 # Объединить значения в список в случае совпадения ключей.
 def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
-    my_dict = dictionary
-    for key, value in kwargs.items():
+    my_dict = copy.copy(dictionary)
+    my_kwargs = copy.copy(kwargs)
+    for key, value in my_kwargs.items():
         if key in my_dict.keys():
-            my_dict[key] = [my_dict[key]]
-            my_dict[key].append(kwargs[key])
+            my_dict[key] = [my_dict[key]] if not isinstance(my_dict[key], list) else my_dict[key]
+            my_kwargs[key] = [my_kwargs[key]] if not isinstance(my_kwargs[key], list) else my_kwargs[key]
+            my_dict[key] = my_dict[key] + my_kwargs[key]
         else:
-            my_dict[key] = kwargs[key]
+            my_dict[key] = my_kwargs[key]
     return my_dict
 
 
-# a = update_and_merge_dict_using_kwargs({"a": 3, "b": 4, "c": 7, 1: 0}, a=9, d="df", c=6)
+# a = update_and_merge_dict_using_kwargs({"a": [3, 5], "b": 4, "c": 7, 1: 0}, a=9, d="df", c=[6, 7])
 # print(a, type(a))
 
 
 # Объединить два словарь и вернуть результат.
 # Объединить значения в список в случае совпадения ключей.
 def merge_two_dicts(first: Dict, second: Dict) -> Dict:
-    my_dict = first
-    for key in second.keys():
-        if key in my_dict.keys():
-            my_dict[key] = [my_dict[key]]
-            my_dict[key].append(second[key])
+    my_first_dict = copy.copy(first)
+    my_second_dict = copy.copy(second)
+    for key in my_second_dict.keys():
+        if key in my_first_dict.keys():
+            my_first_dict[key] = [my_first_dict[key]] if not isinstance(my_first_dict[key], list) \
+                else my_first_dict[key]
+            my_second_dict[key] = [my_second_dict[key]] if not isinstance(my_second_dict[key], list) \
+                else my_second_dict[key]
+            my_first_dict[key] = my_first_dict[key] + my_second_dict[key]
         else:
-            my_dict[key] = second[key]
-    return my_dict
+            my_first_dict[key] = my_second_dict[key]
+    return my_first_dict
 
 
-# a = merge_two_dicts({"a": 3, "b": 4, "c": 7, "e": 0}, {"a": 9, "d": "df", "c": 6})
+# a = merge_two_dicts({"a": [3, 3], "b": 4, "c": 7, "e": 0}, {"a": 9, "d": "df", "c": [6, 7]})
 # print(a, type(a))
 
 
@@ -267,31 +279,69 @@ def merge_two_dicts(first: Dict, second: Dict) -> Dict:
 # - объединить значения в одно множество, если оба значения - множества;
 # - объединить значения в список в любом другом случае.
 def deep_merge_two_dicts(first: Dict, second: Dict) -> Dict:
-    result = first
-    for key in second.keys():
+    my_first_list = copy.copy(first)
+    my_second_list = copy.copy(second)
+    for key in my_second_list.keys():
         if key in first.keys():
-            if isinstance(first[key], list) and isinstance(second[key], list):
-                result[key].extend(second[key])
-            elif isinstance(first[key], set) and isinstance(second[key], set):
-                result[key] = result[key] | (second[key])
-            elif isinstance(first[key], dict) and isinstance(second[key], dict):
-                result[key].update(copy.deepcopy(second[key]))
+            if isinstance(first[key], list) and isinstance(my_second_list[key], list):
+                my_first_list[key].extend(my_second_list[key])
+            elif isinstance(first[key], set) and isinstance(my_second_list[key], set):
+                my_first_list[key] = my_first_list[key] | (my_second_list[key])
+            elif isinstance(first[key], dict) and isinstance(my_second_list[key], dict):
+                my_first_list[key] = deep_merge_two_dicts(my_first_list[key], my_second_list[key])
             else:
-                result[key] = [result[key]]
-                result[key].append(second[key])
+                my_first_list[key] = [my_first_list[key]] if not isinstance(my_first_list[key], list) \
+                    else my_first_list[key]
+                my_second_list[key] = [my_second_list[key]] if not isinstance(my_second_list[key], list) \
+                    else my_second_list[key]
+                my_first_list[key] = my_first_list[key] + my_second_list[key]
         else:
-            result[key] = second[key]
-    return result
+            my_first_list[key] = my_second_list[key]
+    return my_first_list
 
 
-# a = deep_merge_two_dicts({"a": 3, "b": [4, 5], "c": {"1": 1, "2": 2}, "d": "ae", "e": {0, 1, 2}, "f": 34},
-#                          {"a": [9, 34], "b": [8, 3], "c": {"2": [2, 5], "3": 5}, "d": "df", "e": {2, 3, 4}, "g": "9"})
+# a = deep_merge_two_dicts(
+#     {
+#         "a": 3,
+#         "b": [4, 5],
+#         "c":
+#             {
+#                 "1": 1,
+#                 "2": 2,
+#                 "4":
+#                     {
+#                         "a": 34,
+#                         "d": 4
+#                     }
+#             },
+#         "d": "ae",
+#         "e": {0, 1, 2},
+#         "f": 34
+#     },
+#     {
+#         "a": [9, 34],
+#         "b": [8, 3],
+#         "c":
+#             {
+#                 "2": [2, 5],
+#                 "3": 5,
+#                 "4":
+#                     {
+#                         "c": 5,
+#                         "d": 6
+#                     }
+#             },
+#         "d": "df",
+#         "e": {2, 3, 4},
+#         "g": "9"
+#     })
+#
 # print(a, type(a))
 
 
 # Вернуть список, состоящий из ключей, принадлежащих словарю.
 def get_keys(dictionary: Dict) -> List:
-    return [key for key in dictionary.keys()]
+    return list(dictionary.keys())
 
 
 # a = get_keys({"a": 3, "b": [4, 5], "c": {"1": 1, "2": 2}, "d": "ae", "e": {0, 1, 2}, "f": 34})
@@ -300,7 +350,7 @@ def get_keys(dictionary: Dict) -> List:
 
 # Вернуть список, состоящий из значений, принадлежащих словарю.
 def get_values(dictionary: Dict) -> List:
-    return [value for value in dictionary.values()]
+    return list(dictionary.values())
 
 
 # a = get_values({"a": 3, "b": [4, 5], "c": {"1": 1, "2": 2}, "d": "ae", "e": {0, 1, 2}, "f": 34})
@@ -309,7 +359,7 @@ def get_values(dictionary: Dict) -> List:
 
 # Вернуть список, состоящий из пар ключ-значение, принадлежащих словарю.
 def get_key_value_pairs(dictionary: Dict) -> List[Tuple]:
-    return [pair for pair in dictionary.items()]
+    return list(dictionary.items())
 
 
 # a = get_key_value_pairs({"a": 3, "b": [4, 5], "c": {"1": 1, "2": 2}, "d": "ae", "e": {0, 1, 2}, "f": 34})
@@ -318,20 +368,21 @@ def get_key_value_pairs(dictionary: Dict) -> List[Tuple]:
 
 # Реверсировать и вернуть словарь.
 def reverse_dict(dictionary: Dict) -> Dict:
-    my_list = [pair for pair in dictionary.items()]
-    my_list.reverse()
-    return dict(my_list)
+    return dict(reversed(dictionary.items()))
 
 
 # a = reverse_dict({"a": 3, "b": [4, 5], "c": {"1": 1, "2": 2}, "d": "ae", "e": {0, 1, 2}, "f": 34})
 # print(a, type(a))
 
+
 # Удалить из словаря элементы, имеющие пустые значения (None, '', [], {}).
 def clear_dummy_elements(dictionary: Dict) -> Dict:
-    return {key: value for key, value in dictionary.items() if value}
+    return {key: value for key, value in dictionary.items() if value or isinstance(value, int)
+            or isinstance(value, float)}
 
 
-# a = clear_dummy_elements({"a": None, "b": [], "c": {"1": 1, "2": 2}, "d": "", "e": {0, 1, 2}, "f": {}})
+# a = clear_dummy_elements({"a": None, "b": [], "c": {"1": 1, "2": 2}, "d": "", "e": {0, 1, 2}, "f": {},
+#                           "g": 0, "h": 0.0, "i": False})
 # print(a, type(a))
 
 
@@ -339,21 +390,21 @@ def clear_dummy_elements(dictionary: Dict) -> Dict:
 def clear_dummy_and_duplicate_elements(dictionary: Dict) -> Dict:
     my_dict = {}
     for key, value in dictionary.items():
-        if value and value not in my_dict.values():
+        if (value or isinstance(value, int) or isinstance(value, float)) \
+                and value not in my_dict.values():
             my_dict[key] = value
     return my_dict
 
+
 # a = clear_dummy_and_duplicate_elements({"a": None, "b": [], "c": {"1": 1, "2": 2}, "d": "", "e": {0, 1, 2}, "f": {},
-#                                         "g": 43, "h": "df", "i": "dg", "j": [1, 4], "k": [4, 7], "l": [4, 7]})
+#                                         "g": 43, "h": "df", "i": "df", "j": 43, "k": [4, 7], "l": [4, 7],
+#                                         "m": 0, "o": 0.0, "p": False})
 # print(a, type(a))
 
 
 # Обменять в словаре ключи и значения (в качестве значений могут выступать только неизменяемые значения).
 def swap_dict_keys_and_values(dictionary: Dict) -> Dict:
-    my_list = [list(pair) for pair in dictionary.items()]
-    for line in my_list:
-        line.reverse()
-    return dict(my_list)
+    return {value: key for key, value in dictionary.items()}
 
 
 # a = swap_dict_keys_and_values({"a": 10, "b": "11", "c": 12, "d": "13", "e": 14, "f": "15"})
@@ -362,9 +413,7 @@ def swap_dict_keys_and_values(dictionary: Dict) -> Dict:
 
 # Вернуть словарь, отсортированный по ключу. Ключи могут иметь только тип int.
 def sort_dict_with_int_keys(dictionary: Dict) -> Dict:
-    my_list = [pair for pair in dictionary.items()]
-    my_list.sort()
-    return dict(my_list)
+    return dict(sorted(dictionary.items()))
 
 
 # a = sort_dict_with_int_keys({1: 10, 5: "11", 6: 12, 2: "13", 8: 14, 7: "15"})
@@ -373,9 +422,7 @@ def sort_dict_with_int_keys(dictionary: Dict) -> Dict:
 
 # Вернуть словарь, отсортированный по ключу в обратном порядке. Ключи могут иметь только тип int.
 def sort_dict_backward_with_int_keys(dictionary: Dict) -> Dict:
-    my_list = [pair for pair in dictionary.items()]
-    my_list.sort(reverse=True)
-    return dict(my_list)
+    return dict(sorted(dictionary.items(), reverse=True))
 
 
 # a = sort_dict_backward_with_int_keys({1: 10, 5: "11", 6: 12, 2: "13", 8: 14, 7: "15"})
@@ -421,25 +468,37 @@ def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
 
 # Подсчитать количество элементов словаря, имеющих числовой тип, значение которых находится
 # в интервале [-10, 25].
-def count_dict_elements(dictionary: Dict) -> Dict:
-    amount = 0
-    for value in dictionary.values():
-        amount = amount + 1 if isinstance(value, int) or isinstance(value, float) and 25 > value > -10 else amount
-    return {"number of numbers:": amount}
+def count_dict_elements(dictionary: Dict) -> int:
+    return sum(True for value in dictionary.values() if (isinstance(value, int) or isinstance(value, float))
+               and 25 > value > -10)
 
 
-# a = count_dict_elements({1: 10.5, "f": 10, 5.4: "gf", 6: 12, 2: "13", "b": "11", 6.4: 14, 7: "15",
+# a = count_dict_elements({1: 10.5, "f": 10.9, 5.4: "gf", 6: -2, 2: "13", "b": "11", 6.4: 14, 7: "15",
 #                         "c": "13", 2.4: 14, 8: "15", 4.4: 14, 9.8: "15", "d": 12, "e": "15", "l": 34.5})
-# print(a, type(a))
+# print(a)
 
 
 # Построить и возвратить словарь из двух списков. Количество ключей может превышать
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
 # в качестве значений использовать значение None.
 def build_dict_from_two_unaligned_lists(keys: List, values: List) -> Dict:
-    my_dict = dict.fromkeys(keys)
-    my_dict_2 = dict(zip(my_dict, values))
-    my_dict.update(my_dict_2)
+    # my_dict = dict.fromkeys(keys)
+    # my_dict_2 = dict(zip(my_dict, values))
+    # my_dict.update(my_dict_2)
+    # .....................................................
+    # my_dict = {}
+    # for i in range(len(keys)):
+    #     try:
+    #         my_dict[keys[i]] = values[i]
+    #     except IndexError:
+    #         my_dict[keys[i]] = None
+    # .....................................................
+    # my_dict = dict(zip_longest(keys, values))
+    # .....................................................
+    my_values = copy.copy(values)
+    while len(keys) > len(my_values):
+        my_values.append(None)
+    my_dict = dict(zip(keys, my_values))
     return my_dict
 
 
@@ -452,9 +511,14 @@ def build_dict_from_two_unaligned_lists(keys: List, values: List) -> Dict:
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
 # в качестве значений использовать значение, заданное по-умолчанию.
 def build_dict_from_two_unaligned_lists_and_default(keys: List, values: List, default: Any) -> Dict:
-    my_dict = dict.fromkeys(keys, default)
-    my_dict_2 = dict(zip(my_dict, values))
-    my_dict.update(my_dict_2)
+    # my_dict = dict.fromkeys(keys, default)
+    # my_dict_2 = dict(zip(my_dict, values))
+    # my_dict.update(my_dict_2)
+    # .....................................................
+    my_values = copy.copy(values)
+    while len(keys) > len(my_values):
+        my_values.append(default)
+    my_dict = dict(zip(keys, my_values))
     return my_dict
 
 
