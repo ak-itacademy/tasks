@@ -48,13 +48,11 @@ def type_func(*arg) -> Tuple:
 #   dict: [['e', {1: 2}]]
 # }
 def grouping(**arg):
-    my_type_list = {}
+    my_dict = {}
     for key, value in arg.items():
-        my_type = str(type(value))[8:-2]
-        my_type_list.setdefault(my_type, [])
-        my_type_list[my_type].append([key, value])
-
-    return my_type_list
+        my_type = type(value)
+        my_dict[my_type].append([key, value]) if my_type in my_dict else my_dict.setdefault(my_type, [[key, value]])
+    return my_dict
 
 
 # for key, value in grouping(a=34, b='some text', c=2, d=1.3, e={1: 2}, f=-3.0,
@@ -71,17 +69,19 @@ def grouping(**arg):
 
 def function(text: str, *arg, **kwargs):
     my_list = text.split()
-
     for i in range(len(my_list)):
-        if "**" in my_list[i]:
-            my_list[i] = my_list[i].replace("**", "*")
-        elif "*" in my_list[i]:
-            element = my_list[i].strip("*,")
-            if element.lstrip("-").isdigit():
-                my_list[i] = my_list[i].replace(f"*{element}*", str(arg[int(element)]))
-            else:
-                my_list[i] = my_list[i].replace(f"*{element}*", str(kwargs[element]))
+        line = my_list[i]
+        if "*" in line:
+            first_symbol = line.find("*")
+            second_symbol = line[first_symbol + 1:].find("*") + 2
+            element = line[first_symbol:second_symbol]
 
+            if not element[1:-1]:
+                my_list[i] = line.replace(element, "*")
+            elif element[1:-1].lstrip("-").isdigit():
+                my_list[i] = line.replace(element, str(arg[int(element[1:-1])]))
+            else:
+                my_list[i] = line.replace(element, str(kwargs[element[1:-1]]))
     result = " ".join(my_list)
     return result
 
