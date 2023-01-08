@@ -59,7 +59,7 @@ def change_sign(value: int) -> int:
 # Возвратить True, если хотя бы один четный бит 32-х битного числа установлен в 1.
 def check_32_even_bit_set(value: int) -> bool:
     for i in range(32, 2):
-        if i % 2 == 0 and value & (1 << i) == 1:
+        if i % 2 == 0 and value & (1 << i) >= 1:
             return True
     return False
 
