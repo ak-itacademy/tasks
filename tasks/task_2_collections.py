@@ -6,7 +6,6 @@
 
 from typing import Any, Dict, Iterable, List, Tuple
 import copy
-from itertools import zip_longest
 
 
 # Сконструировать и вернуть список из переданных аргументов.
@@ -69,13 +68,15 @@ def build_list_from_list_args(*lists) -> List:
 
 # Сконструировать список из заданного элемента и значения длины (использовать умножение).
 def build_list_from_value_and_length(value: Any, length: int) -> List:
-    return [value.copy()] * length
+    return [copy.deepcopy(value)] * length
 
 
-# l = [1, 2, 3]
+# m = [1, 2]
+# l = {"1": m, "2": 2, "3": 3}
 # a = build_list_from_value_and_length(l, 3)
 # print(a, type(a))
 # l[2] = 4
+# m[1] = 5
 # print(a, type(a))
 
 
@@ -236,14 +237,13 @@ def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
 # Объединить значения в список в случае совпадения ключей.
 def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
     my_dict = copy.copy(dictionary)
-    my_kwargs = copy.copy(kwargs)
-    for key, value in my_kwargs.items():
+    for key, value in kwargs.items():
         if key in my_dict.keys():
-            my_dict[key] = [my_dict[key]] if not isinstance(my_dict[key], list) else my_dict[key]
-            my_kwargs[key] = [my_kwargs[key]] if not isinstance(my_kwargs[key], list) else my_kwargs[key]
-            my_dict[key] = my_dict[key] + my_kwargs[key]
+            if not isinstance(my_dict[key], list):
+                my_dict[key] = [my_dict[key]]
+            my_dict[key] = my_dict[key] + kwargs[key] if isinstance(kwargs[key], list) else my_dict[key] + [kwargs[key]]
         else:
-            my_dict[key] = my_kwargs[key]
+            my_dict[key] = kwargs[key]
     return my_dict
 
 
@@ -255,16 +255,14 @@ def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
 # Объединить значения в список в случае совпадения ключей.
 def merge_two_dicts(first: Dict, second: Dict) -> Dict:
     my_first_dict = copy.copy(first)
-    my_second_dict = copy.copy(second)
-    for key in my_second_dict.keys():
+    for key in second.keys():
         if key in my_first_dict.keys():
-            my_first_dict[key] = [my_first_dict[key]] if not isinstance(my_first_dict[key], list) \
-                else my_first_dict[key]
-            my_second_dict[key] = [my_second_dict[key]] if not isinstance(my_second_dict[key], list) \
-                else my_second_dict[key]
-            my_first_dict[key] = my_first_dict[key] + my_second_dict[key]
+            if not isinstance(my_first_dict[key], list):
+                my_first_dict[key] = [my_first_dict[key]]
+            my_first_dict[key] = my_first_dict[key] + second[key] if isinstance(second[key], list)\
+                else my_first_dict[key] + [second[key]]
         else:
-            my_first_dict[key] = my_second_dict[key]
+            my_first_dict[key] = second[key]
     return my_first_dict
 
 
@@ -280,23 +278,21 @@ def merge_two_dicts(first: Dict, second: Dict) -> Dict:
 # - объединить значения в список в любом другом случае.
 def deep_merge_two_dicts(first: Dict, second: Dict) -> Dict:
     my_first_list = copy.copy(first)
-    my_second_list = copy.copy(second)
-    for key in my_second_list.keys():
+    for key in second.keys():
         if key in first.keys():
-            if isinstance(first[key], list) and isinstance(my_second_list[key], list):
-                my_first_list[key].extend(my_second_list[key])
-            elif isinstance(first[key], set) and isinstance(my_second_list[key], set):
-                my_first_list[key] = my_first_list[key] | (my_second_list[key])
-            elif isinstance(first[key], dict) and isinstance(my_second_list[key], dict):
-                my_first_list[key] = deep_merge_two_dicts(my_first_list[key], my_second_list[key])
+            if isinstance(first[key], list) and isinstance(second[key], list):
+                my_first_list[key].extend(second[key])
+            elif isinstance(first[key], set) and isinstance(second[key], set):
+                my_first_list[key] = my_first_list[key] | (second[key])
+            elif isinstance(first[key], dict) and isinstance(second[key], dict):
+                my_first_list[key] = deep_merge_two_dicts(my_first_list[key], second[key])
             else:
-                my_first_list[key] = [my_first_list[key]] if not isinstance(my_first_list[key], list) \
-                    else my_first_list[key]
-                my_second_list[key] = [my_second_list[key]] if not isinstance(my_second_list[key], list) \
-                    else my_second_list[key]
-                my_first_list[key] = my_first_list[key] + my_second_list[key]
+                if not isinstance(my_first_list[key], list):
+                    my_first_list[key] = [my_first_list[key]]
+                my_first_list[key] = my_first_list[key] + second[key] if isinstance(second[key], list) \
+                    else my_first_list[key] + [second[key]]
         else:
-            my_first_list[key] = my_second_list[key]
+            my_first_list[key] = second[key]
     return my_first_list
 
 
@@ -377,8 +373,7 @@ def reverse_dict(dictionary: Dict) -> Dict:
 
 # Удалить из словаря элементы, имеющие пустые значения (None, '', [], {}).
 def clear_dummy_elements(dictionary: Dict) -> Dict:
-    return {key: value for key, value in dictionary.items() if value or isinstance(value, int)
-            or isinstance(value, float)}
+    return {key: value for key, value in dictionary.items() if value not in [None, "", [], {}]}
 
 
 # a = clear_dummy_elements({"a": None, "b": [], "c": {"1": 1, "2": 2}, "d": "", "e": {0, 1, 2}, "f": {},
@@ -390,8 +385,7 @@ def clear_dummy_elements(dictionary: Dict) -> Dict:
 def clear_dummy_and_duplicate_elements(dictionary: Dict) -> Dict:
     my_dict = {}
     for key, value in dictionary.items():
-        if (value or isinstance(value, int) or isinstance(value, float)) \
-                and value not in my_dict.values():
+        if (value not in [None, "", [], {}]) and value not in my_dict.values():
             my_dict[key] = value
     return my_dict
 
@@ -469,8 +463,7 @@ def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
 # Подсчитать количество элементов словаря, имеющих числовой тип, значение которых находится
 # в интервале [-10, 25].
 def count_dict_elements(dictionary: Dict) -> int:
-    return sum(True for value in dictionary.values() if (isinstance(value, int) or isinstance(value, float))
-               and 25 > value > -10)
+    return sum(1 for value in dictionary.values() if type(value) in (int, float) and 25 > value > -10)
 
 
 # a = count_dict_elements({1: 10.5, "f": 10.9, 5.4: "gf", 6: -2, 2: "13", "b": "11", 6.4: 14, 7: "15",
@@ -482,23 +475,7 @@ def count_dict_elements(dictionary: Dict) -> int:
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
 # в качестве значений использовать значение None.
 def build_dict_from_two_unaligned_lists(keys: List, values: List) -> Dict:
-    # my_dict = dict.fromkeys(keys)
-    # my_dict_2 = dict(zip(my_dict, values))
-    # my_dict.update(my_dict_2)
-    # .....................................................
-    # my_dict = {}
-    # for i in range(len(keys)):
-    #     try:
-    #         my_dict[keys[i]] = values[i]
-    #     except IndexError:
-    #         my_dict[keys[i]] = None
-    # .....................................................
-    # my_dict = dict(zip_longest(keys, values))
-    # .....................................................
-    my_values = copy.copy(values)
-    while len(keys) > len(my_values):
-        my_values.append(None)
-    my_dict = dict(zip(keys, my_values))
+    my_dict = dict(zip(keys, values + [None] * (len(keys) - len(values))))
     return my_dict
 
 
@@ -511,14 +488,7 @@ def build_dict_from_two_unaligned_lists(keys: List, values: List) -> Dict:
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
 # в качестве значений использовать значение, заданное по-умолчанию.
 def build_dict_from_two_unaligned_lists_and_default(keys: List, values: List, default: Any) -> Dict:
-    # my_dict = dict.fromkeys(keys, default)
-    # my_dict_2 = dict(zip(my_dict, values))
-    # my_dict.update(my_dict_2)
-    # .....................................................
-    my_values = copy.copy(values)
-    while len(keys) > len(my_values):
-        my_values.append(default)
-    my_dict = dict(zip(keys, my_values))
+    my_dict = dict(zip(keys, values + [default] * (len(keys) - len(values))))
     return my_dict
 
 
