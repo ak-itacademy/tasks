@@ -430,14 +430,13 @@ def group_dict_elements_by_key_type(dictionary: Dict) -> Dict:
     my_float_list = [pair for pair in dictionary.items() if isinstance(pair[0], float)]
     my_int_list = [pair for pair in dictionary.items() if isinstance(pair[0], int)]
     my_str_list = [pair for pair in dictionary.items() if isinstance(pair[0], str)]
-    my_float_list.sort()
-    my_int_list.sort()
-    my_str_list.sort()
-    return dict(my_int_list + my_float_list + my_str_list)
+    return dict(sorted(my_int_list, key=lambda x: int(x[0]))
+                + sorted(my_float_list, key=lambda x: float(x[0]))
+                + sorted(my_str_list, key=lambda x: ord(x[0])))
 
 
 # a = group_dict_elements_by_key_type({1: 10, "f": 10, 5.4: "gf", 6: 12, 2: "13", "b": "11", 6.4: 14, 7: "15",
-#                                      "c": "13", 2.4: 14, 8: "15", 4.4: 14, 9.8: "15", "d": 12, "e": "15"})
+#                                      "C": "13", 2.4: 14, 8: "15", 4.4: 14, 9.8: "15", "d": 12, "e": "15"})
 # print(a, type(a))
 
 
@@ -449,14 +448,13 @@ def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
     my_float_list = [pair for pair in dictionary.items() if isinstance(pair[0], float)]
     my_int_list = [pair for pair in dictionary.items() if isinstance(pair[0], int)]
     my_str_list = [pair for pair in dictionary.items() if isinstance(pair[0], str)]
-    my_float_list.sort(reverse=True)
-    my_int_list.sort(reverse=True)
-    my_str_list.sort(reverse=True)
-    return dict(my_int_list + my_float_list + my_str_list)
+    return dict(sorted(my_int_list, key=lambda x: int(x[0]), reverse=True)
+                + sorted(my_float_list, key=lambda x: float(x[0]), reverse=True)
+                + sorted(my_str_list, key=lambda x: ord(x[0]), reverse=True))
 
 
 # a = group_dict_elements_by_key_type_and_sort({1: 10, "f": 10, 5.4: "gf", 6: 12, 2: "13", "b": "11", 6.4: 14, 7: "15",
-#                                      "c": "13", 2.4: 14, 8: "15", 4.4: 14, 9.8: "15", "d": 12, "e": "15"})
+#                                               "C": "13", 2.4: 14, 8: "15", 4.4: 14, 9.8: "15", "d": 12, "e": "15"})
 # print(a, type(a))
 
 
@@ -488,12 +486,14 @@ def build_dict_from_two_unaligned_lists(keys: List, values: List) -> Dict:
 # количество значений. В этом случае (для ключей, оставшихся без соответствующей пары)
 # в качестве значений использовать значение, заданное по-умолчанию.
 def build_dict_from_two_unaligned_lists_and_default(keys: List, values: List, default: Any) -> Dict:
-    my_dict = dict(zip(keys, values + [default] * (len(keys) - len(values))))
-    return my_dict
+    return dict(zip(keys, values + list(map(copy.copy, [default] * (len(keys) - len(values))))))
 
 
+# l = [1, 2]
 # a = build_dict_from_two_unaligned_lists_and_default([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-#                                         ["1", "2", "3", "4", "5"], "def")
+#                                                     ["1", "2", "3", "4", "5"], l)
+# print(a, type(a))
+# a[7].append(3)
 # print(a, type(a))
 
 
