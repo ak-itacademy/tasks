@@ -93,18 +93,13 @@ def unpack_4_4(value: int) -> int:
 def clamp(value: float, low: float, high: float) -> float:
     if low <= value <= high:
         return value
-    elif value < low:
-        return low
-    return high
+    
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
-    if low <= value <= high or high <= value <= low:
-        return value
-    elif value > low > high or value < low < high:
-        return low
-    elif value > high > low:
-        return high
+    if low > high:
+        low, high = high, low
+    return clamp(value, low, high)
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
@@ -119,14 +114,12 @@ def reverse_operations(value: float):
 
 # Установить n-ый бит числа в единицу.
 def set_nth_bit(value: int, n: int) -> int:
-    value = value | (1 << n)
-    return value
+    return value | (1 << n)
 
 
 # Переключить n-ый бит числа.
 def switch_nth_bit(value: int, n: int) -> int:
-    value = value ^ (1 << n)
-    return value
+    return value ^ (1 << n)
 
 
 # Расставить скобки таким образом, чтобы выражение в задаче было возведено в степень 3.
