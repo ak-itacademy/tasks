@@ -4,7 +4,7 @@
 '''
 
 
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 
 
 # Реализовать функцию, которая принимает строку и возвращает ее в обратном порядке.
@@ -66,19 +66,24 @@ def grouping(**arg):
 # отрицательная индексация.
 # Вместо *name* должен быть подставлен именованный параметр с именем name.
 
-def function(text: str, *arg, **kwargs):
+def function(text: str, *arg, **kwargs) -> str:
     my_list = text.split("*")
     for i in range(len(my_list)):
         line = my_list[i]
-        if line in kwargs:
-            my_list[i] = str(kwargs[line])
-        elif line.lstrip("-").isdigit():
-            my_list[i] = str(arg[int(line)])
-        elif not line:
-            my_list[i] = "*"
+        if i % 2:
+            if not line:
+                my_list[i] = "*"
+            elif line in kwargs:
+                my_list[i] = str(kwargs[line])
+            else:
+                try:
+                    my_list[i] = str(arg[int(line)])
+                except (ValueError, IndexError):
+                    return "Wrong data!"
+
     result = "".join(my_list)
     return result
 
 
-# print(function("This string contains elements ** kind of *2*/*-2*/*0*, *2*, *1*, *0*, *param_3*, *param_2*, *param_0*, *param_1*.",
+# print(function("This string contains elements ** kind of *2**-2**0*, *2*/*-2*/*0*, *2*, *1*, *0*, *param_2*, *param_3*, *param_1*, *param_0*",
 #                10, "This", -29.5, param_0="Text", param_1=4, param_2=4.65, param_3=[1, 2, 3]))
