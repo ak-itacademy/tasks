@@ -34,193 +34,143 @@ from typing import Union
 
 class LengthUnits:
     UNIT_NAME: str = "Length Units"
+    CONVERSION_RATE: float = 0.0
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate: float):
-        self.__conversion_rate = float(conversion_rate)
-        self.__value = float(value) * self.__conversion_rate if isinstance(value, float) or isinstance(value, int) \
-            else value.value()
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        self.__value = float(value) * self.CONVERSION_RATE if type(value) in (int, float) else value.value
 
     def __eq__(self, another: "LengthUnits"):
-        return self.value() == another.value()
+        return self.value == another.value
 
     def __lt__(self, another: "LengthUnits"):
-        return self.value() < another.value()
+        return self.value < another.value
 
-    def __add__(self, another):
-        self.__value += another * self.__conversion_rate if isinstance(another, float) or isinstance(another, int) \
-            else another.value()
+    def __add__(self, another: Union[float, "LengthUnits"]):
+        result = self.__value + another * self.CONVERSION_RATE if type(another) in (int, float) \
+            else self.__value + another.value
+        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
+
+    def __iadd__(self, another: Union[float, "LengthUnits"]):
+        self.__value += another * self.CONVERSION_RATE if type(another) in (int, float) else another.value
         return self
 
-    def __iadd__(self, another):
-        self.__value += another * self.__conversion_rate if isinstance(another, float) or isinstance(another, int) \
-            else another.value()
+    def __sub__(self, another: Union[float, "LengthUnits"]):
+        result = self.__value - another * self.CONVERSION_RATE if type(another) in (int, float) \
+            else self.__value - another.value
+        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
+
+    def __isub__(self, another: Union[float, "LengthUnits"]):
+        self.__value -= another * self.CONVERSION_RATE if type(another) in (int, float) else another.value
         return self
 
-    def __sub__(self, another):
-        self.__value -= another * self.__conversion_rate if isinstance(another, float) or isinstance(another, int) \
-            else another.value()
-        return self
+    def __mul__(self, value: float):
+        result = self.__value * value
+        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
 
-    def __isub__(self, another):
-        self.__value -= another * self.__conversion_rate if isinstance(another, float) or isinstance(another, int) \
-            else another.value()
-        return self
-
-    def __mul__(self, value):
+    def __imul__(self, value: float):
         self.__value *= value
         return self
 
-    def __imul__(self, value):
-        self.__value *= value
-        return self
+    def __truediv__(self, another: Union[float, "LengthUnits"]):
+        result = self.__value / another if type(another) in (int, float) else self.__value / another.value
+        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE) \
+            if type(another) in (int, float) else result
 
-    def __truediv__(self, another):
-        self.__value /= another if isinstance(another, float) or isinstance(another, int) \
-            else another.value()
-        return self if another is isinstance(another, float) or isinstance(another, int) else self.value()
+    def __idiv__(self, another: Union[float, "LengthUnits"]):
+        self.__value /= another if type(another) in (int, float) else another.value
+        return self if type(another) in (int, float) else self.value
 
-    def __idiv__(self, another):
-        self.__value /= another if isinstance(another, float) or isinstance(another, int)\
-            else another.value()
-        return self if another is isinstance(another, float) or isinstance(another, int) else self.value()
+    def __str__(self):
+        return f"{self.value / self.CONVERSION_RATE} {self.UNIT_NAME}"
 
-    def value(self) -> float:
+    @property
+    def value(self):
         return self.__value
-
-    def set_value(self, value: float):
-        self.__value = float(value)
-
-    def conversion_rate(self) -> float:
-        return self.__conversion_rate
 
 
 class Millimeters(LengthUnits):
-    UNIT_NAME: str = "Millimeters"
+    UNIT_NAME: str = "mm"
+    CONVERSION_RATE: float = 1
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=1):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} mm"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Centimeters(LengthUnits):
-    UNIT_NAME: str = "Centimeters"
+    UNIT_NAME: str = "cm"
+    CONVERSION_RATE: float = 10
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=10):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} cm"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Meters(LengthUnits):
-    UNIT_NAME: str = "Meters"
+    UNIT_NAME: str = "m"
+    CONVERSION_RATE: float = 1000
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=1000):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} m"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Kilometers(LengthUnits):
-    UNIT_NAME: str = "Kilometers"
+    UNIT_NAME: str = "km"
+    CONVERSION_RATE: float = 1000_000
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=1000000):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} km"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Inches(LengthUnits):
-    UNIT_NAME: str = "Inches"
+    UNIT_NAME: str = "in"
+    CONVERSION_RATE: float = 25.4
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=25.4):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f'{value / conversion_rate} in'
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Feets(LengthUnits):
-    UNIT_NAME: str = "Feets"
+    UNIT_NAME: str = "ft"
+    CONVERSION_RATE: float = 304.8
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=304.8):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} ft"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Yards(LengthUnits):
-    UNIT_NAME: str = "Yards"
+    UNIT_NAME: str = "yd"
+    CONVERSION_RATE: float = 914.4
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=914.4):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} yd"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Miles(LengthUnits):
-    UNIT_NAME: str = "Miles"
+    UNIT_NAME: str = "mi"
+    CONVERSION_RATE: float = 1_609_344
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=1_609_344):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} mi"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Fen(LengthUnits):
-    UNIT_NAME: str = "Fen"
+    UNIT_NAME: str = "fen"
+    CONVERSION_RATE: float = 3.33
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=3.33):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} fen"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class Chi(LengthUnits):
-    UNIT_NAME: str = "Chi"
+    UNIT_NAME: str = "chi"
+    CONVERSION_RATE: float = 333
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=333):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} chi"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
 
 
 class In(LengthUnits):
-    UNIT_NAME: str = "In"
+    UNIT_NAME: str = "in"
+    CONVERSION_RATE: float = 33_300
 
-    def __init__(self, value: Union[float, "LengthUnits"], conversion_rate=33_300):
-        super().__init__(value, conversion_rate)
-
-    def __str__(self):
-        value = self.value()
-        conversion_rate = self.conversion_rate()
-        return f"{value / conversion_rate} in"
+    def __init__(self, value: Union[float, "LengthUnits"]):
+        super().__init__(value)
