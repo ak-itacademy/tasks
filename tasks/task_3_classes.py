@@ -48,7 +48,7 @@ class LengthUnits:
     def __add__(self, another: Union[float, "LengthUnits"]):
         result = self.__value + another * self.CONVERSION_RATE if type(another) in (int, float) \
             else self.__value + another.value
-        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
+        return self.__class__(result / self.CONVERSION_RATE)
 
     def __iadd__(self, another: Union[float, "LengthUnits"]):
         self.__value += another * self.CONVERSION_RATE if type(another) in (int, float) else another.value
@@ -57,7 +57,7 @@ class LengthUnits:
     def __sub__(self, another: Union[float, "LengthUnits"]):
         result = self.__value - another * self.CONVERSION_RATE if type(another) in (int, float) \
             else self.__value - another.value
-        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
+        return self.__class__(result / self.CONVERSION_RATE)
 
     def __isub__(self, another: Union[float, "LengthUnits"]):
         self.__value -= another * self.CONVERSION_RATE if type(another) in (int, float) else another.value
@@ -65,7 +65,7 @@ class LengthUnits:
 
     def __mul__(self, value: float):
         result = self.__value * value
-        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE)
+        return self.__class__(result / self.CONVERSION_RATE)
 
     def __imul__(self, value: float):
         self.__value *= value
@@ -73,8 +73,7 @@ class LengthUnits:
 
     def __truediv__(self, another: Union[float, "LengthUnits"]):
         result = self.__value / another if type(another) in (int, float) else self.__value / another.value
-        return globals().get(type(self).__name__, None)(result / self.CONVERSION_RATE) \
-            if type(another) in (int, float) else result
+        return self.__class__(result / self.CONVERSION_RATE) if type(another) in (int, float) else result
 
     def __idiv__(self, another: Union[float, "LengthUnits"]):
         self.__value /= another if type(another) in (int, float) else another.value
