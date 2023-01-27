@@ -427,12 +427,7 @@ def sort_dict_backward_with_int_keys(dictionary: Dict) -> Dict:
 # В качестве ключей могут выступать: целые числа, дробные числа и строки.
 # Приоритет сортировки групп (от высшего к низшему): целые числа, дробные числа, строки.
 def group_dict_elements_by_key_type(dictionary: Dict) -> Dict:
-    my_float_list = [pair for pair in dictionary.items() if isinstance(pair[0], float)]
-    my_int_list = [pair for pair in dictionary.items() if isinstance(pair[0], int)]
-    my_str_list = [pair for pair in dictionary.items() if isinstance(pair[0], str)]
-    return dict(sorted(my_int_list, key=lambda x: int(x[0]))
-                + sorted(my_float_list, key=lambda x: float(x[0]))
-                + sorted(my_str_list, key=lambda x: ord(x[0])))
+    return dict(sorted(dictionary.items(), key=lambda pair: ({int: 0, float: 1, str: 2}[type(pair[0])], pair[0])))
 
 
 # a = group_dict_elements_by_key_type({1: 10, "f": 10, 5.4: "gf", 6: 12, 2: "13", "b": "11", 6.4: 14, 7: "15",
@@ -445,12 +440,8 @@ def group_dict_elements_by_key_type(dictionary: Dict) -> Dict:
 # Приоритет сортировки групп (от высшего к низшему): целые числа, дробные числа, строки.
 # Внутри каждой из групп отсортировать элементы по значениям ключа в обратном порядке.
 def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
-    my_float_list = [pair for pair in dictionary.items() if isinstance(pair[0], float)]
-    my_int_list = [pair for pair in dictionary.items() if isinstance(pair[0], int)]
-    my_str_list = [pair for pair in dictionary.items() if isinstance(pair[0], str)]
-    return dict(sorted(my_int_list, key=lambda x: int(x[0]), reverse=True)
-                + sorted(my_float_list, key=lambda x: float(x[0]), reverse=True)
-                + sorted(my_str_list, key=lambda x: ord(x[0]), reverse=True))
+    return dict(sorted(dictionary.items(), key=lambda pair: ({int: 2, float: 1, str: 0}[type(pair[0])], pair[0]),
+                       reverse=True))
 
 
 # a = group_dict_elements_by_key_type_and_sort({1: 10, "f": 10, 5.4: "gf", 6: 12, 2: "13", "b": "11", 6.4: 14, 7: "15",
