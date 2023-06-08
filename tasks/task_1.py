@@ -13,7 +13,7 @@ def add_mul(first: float, second: float) -> Tuple[float, float, float]:
 
 # Реализовать функции деления, деления нацело и нахождения остатка от деления.
 def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
-    return first/second, first//second, first % second
+    return first / second, first // second, first % second
 
 
 # Обменять два целочисленных значение с помощью битового xor не используя промежуточноые переменные.
@@ -41,11 +41,11 @@ def div_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 
 # Реализовать операцию возведения в степень остатка от деления.
 def exponentiation(divident: float, divider: float, power: float) -> float:
-    return (divident % divider)**power
+    return (divident % divider) ** power
 
 # Определить знак 32-битного числа с помощью операции &.
 def sign(value: int) -> int:
-    return  -1 if value >> 31 & 1 else 1
+    return -1 if value & 0x80000000 else 1
 
 
 # Умножить целочисленное значение на -1 с помощью битовых операций и сложения.
@@ -55,8 +55,7 @@ def change_sign(value: int) -> int:
 
 # Возвратить True, если хотя бы один четный бит 32-х битного числа установлен в 1.
 def check_32_even_bit_set(value: int) -> bool:
-    check_mask = 0b10101010101010101010101010101010
-    return bool(value & check_mask)
+    return bool(value & 0x55555555)
 
 
 # Посчитать количество бит в 32-х битном числе, установленных в ноль.
@@ -87,9 +86,7 @@ def clamp(value: float, low: float, high: float) -> float:
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
-    lower_bound = min(low, high)
-    upper_bound = max(low, high)
-    return max(min(value, upper_bound), lower_bound)
+    return clamp(value, low, high) if low < high else clamp(value, high, low)
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
