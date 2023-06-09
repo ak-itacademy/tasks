@@ -7,34 +7,25 @@ from typing import Tuple
 
 # Реализовать функции сложения, вычитания и умножения двух чисел.
 def add_mul(first: float, second: float) -> Tuple[float, float, float]:
-    summ = first + second
-    difference = first - second
-    product = first * second
-    return summ, difference, product
+    return first + second, first - second, first * second
 
 
 # Реализовать функции деления, деления нацело и нахождения остатка от деления.
 def div_int_rem(first: float, second: float) -> Tuple[float, float, float]:
-    quotient = first/second
-    remainder = first % second
-    int_division = first//second
-    return quotient, remainder, int_division
+    return first/second, first % second, first//second
 
 
 # Обменять два целочисленных значение с помощью битового xor не используя промежуточноые переменные.
-def xor_swap(first: int, second: int) -> int:
+def xor_swap(first: int, second: int) -> Tuple[int, int]:
     first = first + second
     second = first - second
     second = second - first
-    return first and second
+    return first, second
 
 
 # Вернуть наименьшее число, используя условный оператор.
 def min_conditional(first: float, second: float) -> float:
-    if first < second:
-        return first
-    else:
-        return second
+    return first if first < second else second
 
 
 # Реализовать функции умножения на 2, 8 и 32 с помощью битовых операций сдвига.
@@ -49,17 +40,14 @@ def div_shift_2_8_32(value: int) -> Tuple[int, int, int]:
 
 # Реализовать операцию возведения в степень остатка от деления.
 def exponentiation(divident: float, divider: float, power: float) -> float:
-    remainder = divident % divider
-    result = remainder ** power
-    return result
+    return (divident % divider) ** power
 
 
 # Определить знак 32-битного числа с помощью операции &.
 def sign(value: int) -> int:
     if value & 0x80000000:
         return -1
-    else:
-        return 1
+    return 1
 
 
 # Умножить целочисленное значение на -1 с помощью битовых операций и сложения.
@@ -74,49 +62,44 @@ def check_32_even_bit_set(value: int) -> bool:
 
 # Посчитать количество бит в 32-х битном числе, установленных в ноль.
 def calculate_32_zero_bits(value: int) -> int:
-    mask = (1 << 32) - 1
-    ones = mask ^ value
-    zeros = bin(ones).count('0') - 1
-    return zeros
+    count = 0
+    for i in range(32):
+        if (value & (1 << i)) == 0:
+            count += 1
+    return count
 
 
 # Упаковать два целочисленных значения в 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def pack_4_4(first: int, second: int) -> int:
-    result = (first & 0b00001111) | ((second & 0b11110000) << 4)
-    return result
+    return (first & 0b00001111) | ((second & 0b11110000) << 4)
 
 
 # Распоковать два целочисленных значения из 8 бит.
 # Первое число должно располагаться в 4 младших битах, второе число в - 4 старших.
 def unpack_4_4(first: int, second: int) -> int:
-    result = ((second & 0b11110000) >> 4) | (first & 0b00001111)
-    return result
+    return ((second & 0b11110000) >> 4) | (first & 0b00001111)
 
 
 # Ограничить число заданным интервалом. Нижняя граница заданного интервала меньше либо равна верхней.
 def clamp(value: float, low: float, high: float) -> float:
     if low <= value <= high:
         return value
-    elif value < low:
+    if value < low:
         return low
-    else:
-        return high
+    return high
 
 
 # Ограничить число заданным интервалом. Нижняя граница может быть как меньше, так и больше верхней.
 def clamp_any(value: float, low: float, high: float) -> float:
-    if low > high:
-        high, low = low, high
-        return max(low, min(value, high))
+    if low < high:
+        return max(min(value, high), low)
+    return max(min(value, low), high)
 
 
 # Вернуть True, если число нечетно и входит в интервал от -10 до 10.
 def event_and_match_interval_m10_10(value: int) -> bool:
-    if value % 2 != 0 and -10 <= value <= 10:
-        return True
-    else:
-        return False
+    return value % 2 != 0 and -10 <= value <= 10
 
 
 # Определить порядок выолнения операций и расстваить скобки таким образом, чтобы он стал обратным.
@@ -126,8 +109,7 @@ def reverse_operations(value: float):
 
 # Установить n-ый бит числа в единицу.
 def set_nth_bit(value: int, n: int) -> int:
-    mask = 1 << n
-    return value | mask
+    return value | (1 << n)
 
 
 # Переключить n-ый бит числа.
