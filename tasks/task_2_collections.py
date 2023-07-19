@@ -41,18 +41,17 @@ def build_list_from_list_args(*lists) -> List:
 
 # Сконструировать список из заданного элемента и значения длины (использовать умножение).
 def build_list_from_value_and_length(value: Any, length: int) -> List:
-    return  [value] * length
+    return [value] * length
 
 
 # Удалить из списка заданный элемент.
 def remove_value_from_list(values: List, value_to_remove: Any) -> List:
-     values.remove(value_to_remove)
+    values.remove(value_to_remove)
 
 
 # Удалить из списка заданный элемент, используя comprehension expression [... for .. in ...].
 def remove_value_from_list_using_comprehension(values: List, value_to_remove: Any) -> List:
     return [i for i in values if i != value_to_remove]
-
 
 
 # Удалить из списка заданный элемент, используя `filter` и lambda-функцию.
@@ -68,10 +67,10 @@ def remove_values_from_list(values: List, values_to_remove: Iterable) -> List:
             new_values.append(i)
     return new_values
 
+
 # Удалить из списка заданные элементы. Преобразовать `values_to_remove` в `set`.
 def remove_values_from_list_using_comprehension(values: List, value_to_remove: Any) -> List:
     return [i for i in values if i not in set(value_to_remove)]
-
 
 
 # Удалить из списка заданные элементы. Преобразовать `values_to_remove` в `set`.
@@ -138,6 +137,7 @@ def update_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
     dictionary.update({k: v for k, v in kwargs.items() if k not in dictionary})
     return dictionary
 
+
 # Обновить словарь (и вернуть его), используя значения именованных аргументов.
 # Объединить значения в список в случае совпадения ключей.
 def update_and_merge_dict_using_kwargs(dictionary: Dict, **kwargs) -> Dict:
@@ -180,6 +180,7 @@ def deep_merge_two_dicts(first: Dict, second: Dict) -> Dict:
             first[key] = value
     return first
 
+
 # Вернуть список, состоящий из ключей, принадлежащих словарю.
 def get_keys(dictionary: Dict) -> List:
     return list(dictionary.keys())
@@ -188,7 +189,6 @@ def get_keys(dictionary: Dict) -> List:
 # Вернуть список, состоящий из значений, принадлежащих словарю.
 def get_values(dictionary: Dict) -> List:
     return list(dictionary.values())
-
 
 
 # Вернуть список, состоящий из пар ключ-значение, принадлежащих словарю.
@@ -230,7 +230,8 @@ def sort_dict_backward_with_int_keys(dictionary: Dict) -> Dict:
 # В качестве ключей могут выступать: целые числа, дробные числа и строки.
 # Приоритет сортировки групп (от высшего к низшему): целые числа, дробные числа, строки.
 def group_dict_elements_by_key_type(dictionary: Dict) -> Dict:
-    return dict(sorted(dictionary.items(), key=lambda x: (isinstance(x[0], str), isinstance(x[0], float), isinstance(x[0], int))))
+    return dict(sorted(dictionary.items(),
+                       key=lambda x: (isinstance(x[0], str), isinstance(x[0], float), isinstance(x[0], int))))
 
 
 # Вернуть словарь, элементы которого сгруппированы по типу ключа.
@@ -238,7 +239,7 @@ def group_dict_elements_by_key_type(dictionary: Dict) -> Dict:
 # Приоритет сортировки групп (от высшего к низшему): целые числа, дробные числа, строки.
 # Внутри каждой из групп отсортировать элементы по значениям ключа в обратном порядке.
 def group_dict_elements_by_key_type_and_sort(dictionary: Dict) -> Dict:
-    return {'int': {k: v for k,v in dictionary.items() if isinstance(k, int)},
+    return {'int': {k: v for k, v in dictionary.items() if isinstance(k, int)},
             'float': {k: v for k, v in dictionary.items() if isinstance(k, float)},
             'str': {k: v for k, v in dictionary.items() if isinstance(k, str)}}
 
