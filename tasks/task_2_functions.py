@@ -22,13 +22,7 @@ from typing import get_type_hints
 
 
 def get_param_return_tuple(*args, **kwargs) -> tuple:
-    types = []
-    hints = get_type_hints(get_param_return_tuple)
-    for arg in args:
-        types.append(type(arg))
-    for key, value in kwargs.items():
-        types.append(type(value))
-    return tuple(types)
+    return tuple(map(type, args)) + tuple(map(type, kwargs.values()))
 
 
 # Реализовать функцию, которая принимает произвольный набор именованных параметров и возвращает их
@@ -45,7 +39,7 @@ def group_by_type(**kwargs):
     types = {}
     for key, value in kwargs.items():
         types[type(value)] = types.get(type(value), []) + [[key, value]]
-    return [(k, v) for k, v in types.items()]
+    return types
 
 
 # Реализовать функцию, которая принимает строку и произвольный набор неименованных и именованных параметров.
