@@ -1,7 +1,6 @@
-'''
-Задание 3.
-Классы. Наследование, волшебные методы.
-'''
+
+#Задание 3.
+#Классы. Наследование, волшебные методы.
 
 
 # Необходимо реализовать семейство классов, обеспечивающих прозрачную работу с такими единицами
@@ -25,48 +24,122 @@
 
 
 class LengthUnits:
-    ...
+    ratio = 1.0
+    label = ""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f"{self.value} {self.label}"
+
+    def __eq__(self, other):
+        if isinstance(other, LengthUnits):
+            return self.value == other.to_base_unit().value
+        return self.value == other * self.ratio
+
+    def __lt__(self, other):
+        if isinstance(other, LengthUnits):
+            return self.value < other.to_base_unit().value
+        return self.value < other * self.ratio
+
+    def __add__(self, other):
+        if isinstance(other, LengthUnits):
+            return self.__class__(self.value + other.to_base_unit().value / self.ratio)
+        return self.__class__(self.value + other)
+
+    def __iadd__(self, other):
+        if isinstance(other, LengthUnits):
+            self.value += other.to_base_unit().value / self.ratio
+        else:
+            self.value += other
+        return self
+
+    def __sub__(self, other):
+        if isinstance(other, LengthUnits):
+            return self.__class__(self.value - other.to_base_unit().value / self.ratio)
+        return self.__class__(self.value - other)
+
+    def __isub__(self, other):
+        if isinstance(other, LengthUnits):
+            self.value -= other.to_base_unit().value / self.ratio
+        else:
+            self.value -= other
+        return self
+
+    def __mul__(self, other):
+        return self.__class__(self.value * other)
+
+    def __imul__(self, other):
+        self.value *= other
+        return self
+
+    def __truediv__(self, other):
+        if isinstance(other, LengthUnits):
+            return self.value / other.to_base_unit().value * other.ratio / self.ratio
+        return self.__class__(self.value / other)
+
+    def itruediv(self, other):
+        if isinstance(other, LengthUnits):
+            self.value /= other.to_base_unit().value / self.ratio
+        else:
+            self.value /= other
+        return self
+
+    def to_base_unit(self):
+        return self.__class__(self.value * self.ratio)
 
 
 class Millimeters:
-    ...
+    ratio = 1.0
+    label = "мм"
 
 
 class Centimeters:
-    ...
+    ratio = 10.0
+    label = "см"
 
 
 class Meters:
-    ...
+    ratio = 1000.0
+    label = "м"
 
 
 class Kilometers:
-    ...
+    ratio = 1000000.0
+    label = "км"
 
 
 class Inches:
-    ...
+    ratio = 25.4
+    label = "дюйм"
 
 
 class Feets:
-    ...
+    ratio = 304.8
+    label = "фут"
 
 
 class Yards:
-    ...
+    ratio = 914.4
+    label = "ярд"
 
 
 class Miles:
-    ...
+    ratio = 1609343.9
+    label = "миля"
 
 
 class Fen:
-    ...
+    ratio = 3.33333
+    label = "фэнь"
 
 
 class Chi:
-    ...
+    ratio = 33.3333
+    label = "чи"
 
 
 class In:
-    ...
+    ratio = 333.333
+    label = "инь"
